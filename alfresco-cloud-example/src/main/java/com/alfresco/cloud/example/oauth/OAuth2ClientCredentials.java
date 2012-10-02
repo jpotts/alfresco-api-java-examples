@@ -16,9 +16,9 @@ package com.alfresco.cloud.example.oauth;
 public class OAuth2ClientCredentials {
 
 	  /** Value of the "API Key". */
-	  public static final String CLIENT_ID = "l7xxddafd24d43f44576a103f6aa4ce6cc3f";
+	  public static final String CLIENT_ID = "";
 
 	  /** Value of the "API Secret". */
-	  public static final String CLIENT_SECRET = "a6cd0f5638fb45c9bf7dc37d892e4e94";
+	  public static final String CLIENT_SECRET = "";
 
 }
