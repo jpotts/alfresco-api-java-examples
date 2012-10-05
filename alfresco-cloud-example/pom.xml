@@ -65,5 +65,10 @@
   		<artifactId>tika-parsers</artifactId>
   		<version>1.1</version>
   	</dependency>
+  	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-nop</artifactId>
+		<version>1.6.6</version>
+	</dependency>
   </dependencies>
 </project>
