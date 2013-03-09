@@ -41,8 +41,8 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.http.json.JsonHttpParser;
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson.JacksonFactory;
 
 /**
@@ -101,7 +101,7 @@ public abstract class BaseJavaExample {
 	            @Override
 	            public void initialize(HttpRequest request) throws IOException {
 	              credential.initialize(request);
-	              request.addParser(new JsonHttpParser(JSON_FACTORY));
+	              request.setParser(new JsonObjectParser(new JacksonFactory()));
 	            }
 	    	});
 	    	
