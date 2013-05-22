@@ -34,7 +34,7 @@ import com.google.api.client.http.HttpRequestFactory;
 public class CmisAspectExample extends BaseJavaExample {
 
 	public static final String FOLDER_NAME = "images";
-	public static final String FILE_PATH = "/users/jpotts/Documents/sample/photos/Portland";
+	public static final String FILE_PATH = "/users/jpotts/Documents/sample/photos/Berlin";
 	public static final String FILE_TYPE = "image/jpeg";
 	
 	/**
@@ -59,7 +59,7 @@ public class CmisAspectExample extends BaseJavaExample {
 		Session cmisSession = getCmisSession(accessToken);
 		
 		// Find the root folder of our target site
-		String rootFolderId = getRootFolderId(requestFactory, HOME_NETWORK, SITE);
+		String rootFolderId = getRootFolderId(requestFactory, getHomeNetwork(requestFactory, credential), SITE);
 		
 		// Create a new folder in the root folder
 		Folder subFolder = createFolder(cmisSession, rootFolderId, FOLDER_NAME);
@@ -163,13 +163,13 @@ public class CmisAspectExample extends BaseJavaExample {
 				props.put("cm:longitude", lon);
 			}
         } catch (TikaException te) {
-        	System.out.println("Caught tika exception, skipping");
+        		System.out.println("Caught tika exception, skipping");
         } catch (SAXException se) {
-        	System.out.println("Caught SAXException, skipping");
+        		System.out.println("Caught SAXException, skipping");
         } finally {
-        	if (stream != null) {
-        		stream.close();
-        	}        	
+        		if (stream != null) {
+        			stream.close();
+        		}        	
         }
         return props;
 	}

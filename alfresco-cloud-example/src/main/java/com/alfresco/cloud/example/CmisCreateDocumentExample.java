@@ -43,7 +43,10 @@ public class CmisCreateDocumentExample extends BaseJavaExample {
 
 	public void doExample(HttpRequestFactory requestFactory, Credential credential)
 			throws IOException {
-			
+		
+		// Get the home network
+		String homeNetwork = getHomeNetwork(requestFactory, credential);
+		
 		// Get the accessToken
 		String accessToken = credential.getAccessToken();
 
@@ -51,20 +54,20 @@ public class CmisCreateDocumentExample extends BaseJavaExample {
 		Session cmisSession = getCmisSession(accessToken);
 		
 		// Find the root folder of our target site
-		String rootFolderId = getRootFolderId(requestFactory, HOME_NETWORK, SITE);
+		String rootFolderId = getRootFolderId(requestFactory, homeNetwork, SITE);
 		
 		// Create a new folder in the root folder
 		Folder subFolder = createFolder(cmisSession, rootFolderId, FOLDER_NAME);
 		
 		// Like the folder
-		like(requestFactory, HOME_NETWORK, subFolder.getId());
+		like(requestFactory, homeNetwork, subFolder.getId());
 		
 		// Create a test document in the subFolder
 		Document document = createDocument(cmisSession, subFolder, FILE, FILE_TYPE, null);
 		
 		// Create a comment on the test document
 		// NOTE: When dealing with documents, the REST API wants a versionSeriesID! 
-		comment(requestFactory, HOME_NETWORK, document.getVersionSeriesId(), "Here is a comment!");
+		comment(requestFactory, homeNetwork, document.getVersionSeriesId(), "Here is a comment!");
 		
 	}
 

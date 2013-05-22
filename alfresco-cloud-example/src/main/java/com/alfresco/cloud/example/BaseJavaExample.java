@@ -26,6 +26,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 
 import com.alfresco.cloud.example.model.ContainerEntry;
 import com.alfresco.cloud.example.model.ContainerList;
+import com.alfresco.cloud.example.model.NetworkEntry;
+import com.alfresco.cloud.example.model.NetworkList;
 import com.alfresco.cloud.example.oauth.LocalServerReceiver;
 import com.alfresco.cloud.example.oauth.OAuth2ClientCredentials;
 import com.alfresco.cloud.example.oauth.VerificationCodeReceiver;
@@ -53,7 +55,6 @@ import com.google.api.client.json.jackson.JacksonFactory;
  */
 public abstract class BaseJavaExample {
 
-	public static final String HOME_NETWORK = "alfresco.com";
 	public static final String SITE = "alfresco-api-demo";
 	public static final String SCOPE = "public_api";
 	public static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
@@ -114,6 +115,8 @@ public abstract class BaseJavaExample {
 	    } finally {
 	        receiver.stop();
 	    }
+	    
+	    System.out.println("Done!");
 	}
 
 	public void doExample(HttpRequestFactory requestFactory, Credential credential)
@@ -124,6 +127,8 @@ public abstract class BaseJavaExample {
 	      throws IOException {
 		
 		String code = receiver.waitForCode();
+		
+		//FileCredentialStore fcs = new FileCredentialStore("/var/tmp/oauthcreds", JSON_FACTORY);
 		
 		AuthorizationCodeFlow codeFlow = new AuthorizationCodeFlow.Builder(
 		        BearerToken.authorizationHeaderAccessMethod(),
@@ -242,9 +247,9 @@ public abstract class BaseJavaExample {
         
         Folder subFolder = null;
         try {
-        	// Making an assumption here that you probably wouldn't normally do
-        	subFolder = (Folder) cmisSession.getObjectByPath(rootFolder.getPath() + "/" + folderName);
-        	System.out.println("Folder already existed!");
+        		// Making an assumption here that you probably wouldn't normally do
+        		subFolder = (Folder) cmisSession.getObjectByPath(rootFolder.getPath() + "/" + folderName);
+        		System.out.println("Folder already existed!");
         } catch (CmisObjectNotFoundException onfe) {
             Map<String, Object> props = new HashMap<String, Object>();
             props.put("cmis:objectTypeId",  "cmis:folder");
@@ -276,11 +281,27 @@ public abstract class BaseJavaExample {
         ContainerList containerList = request.execute().parseAs(ContainerList.class);
         String rootFolderId = null;
         for (ContainerEntry containerEntry : containerList.list.entries) {
-        	if (containerEntry.entry.folderId.equals("documentLibrary")) {
-        		rootFolderId = containerEntry.entry.id;
-        		break;
-        	}
+        		if (containerEntry.entry.folderId.equals("documentLibrary")) {
+        			rootFolderId = containerEntry.entry.id;
+        			break;
+        		}
         }
         return rootFolderId;
+	}
+	
+	public String getHomeNetwork(HttpRequestFactory requestFactory, Credential credential) throws IOException {
+		GenericUrl url = new GenericUrl(ALFRESCO_API_URL);
+        
+		HttpRequest request = requestFactory.buildGetRequest(url);        
+        NetworkList networkList = request.execute().parseAs(NetworkList.class);
+        System.out.println("Found " + networkList.list.pagination.totalItems + " networks.");
+        String homeNetwork = "";
+        for (NetworkEntry networkEntry : networkList.list.entries) {
+        	if (networkEntry.entry.homeNetwork) {
+        		homeNetwork = networkEntry.entry.id;
+        	}
+        }
+        System.out.println("Your home network appears to be: " + homeNetwork);
+        return homeNetwork;
 	}
 }
