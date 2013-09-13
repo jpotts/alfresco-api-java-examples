@@ -13,8 +13,8 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 
 /**
- * Knows how to provide the values specific to Alfresco on-premise. Extend this
- * class to load files into Alfresco running on your own server.
+ * Knows how to provide the values specific to Alfresco on-premise, versions 4.2c and earlier.
+ * Extend this class to load files into Alfresco running on your own server.
  * @author jpotts
  */
 public class LocalExampleBase implements ExampleBaseIfc {
@@ -51,7 +51,8 @@ public class LocalExampleBase implements ExampleBaseIfc {
 	
 	// Probably do not need to change any constants below this
 	
-	public static final String ATOMPUB_URL = ALFRESCO_API_URL + "alfresco/cmisatom";
+	//public static final String ATOMPUB_URL = ALFRESCO_API_URL + "alfresco/cmisatom"; // 4.0 - 4.2c
+	public static final String ATOMPUB_URL = ALFRESCO_API_URL + "alfresco/api/-default-/public/cmis/versions/1.0/atom"; // 4.2d
 	
 	/**
 	 * Gets a CMIS Session by connecting to the Alfresco Cloud.
