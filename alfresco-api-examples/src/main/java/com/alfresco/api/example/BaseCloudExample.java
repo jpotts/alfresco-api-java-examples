@@ -50,7 +50,8 @@ public class BaseCloudExample extends BasePublicAPIExample {
 	
 	public static final String TOKEN_SERVER_URL = ALFRESCO_API_URL + "auth/oauth/versions/2/token";
 	public static final String AUTHORIZATION_SERVER_URL = ALFRESCO_API_URL + "auth/oauth/versions/2/authorize";
-	public static final String SCOPE = "public_api";
+	private static final String SCOPE = "public_api";
+	private static final List<String> SCOPES = Arrays.asList(SCOPE);
 
 	private HttpRequestFactory requestFactory;
 	private Credential credential;
@@ -131,10 +132,10 @@ public class BaseCloudExample extends BasePublicAPIExample {
 			        new ClientParametersAuthentication(
 			            OAuth2ClientCredentials.CLIENT_ID, OAuth2ClientCredentials.CLIENT_SECRET),
 			        OAuth2ClientCredentials.CLIENT_ID,
-			        AUTHORIZATION_SERVER_URL).setScopes(SCOPE).build();
+			        AUTHORIZATION_SERVER_URL).setScopes(SCOPES).build();
 			
 			TokenResponse response = codeFlow.newTokenRequest(code)
-			        .setRedirectUri(redirectUri).setScopes(SCOPE).execute();
+			        .setRedirectUri(redirectUri).setScopes(SCOPES).execute();
 			
 			return codeFlow.createAndStoreCredential(response, null);
 

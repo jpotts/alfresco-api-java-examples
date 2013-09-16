@@ -8,7 +8,7 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
 
 /**
- * Shows how to use CMIS to create a document in the Alfresco Cloud.
+ * Shows how to use CMIS to create a document using the Alfresco Public API.
  * Also uses the REST API to like a folder and comment on a document.
  * 
  * @author jpotts

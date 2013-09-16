@@ -28,7 +28,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author jpotts
  *
  */
-public class CmisAspectExample extends BaseCloudExample {
+public class CmisAspectExample extends BaseOnPremExample {
 
 	public static final String FOLDER_NAME = "images";
 	public static final String FILE_PATH = "/users/jpotts/Documents/sample/photos/Berlin";
@@ -163,13 +163,13 @@ public class CmisAspectExample extends BaseCloudExample {
 				props.put("cm:longitude", lon);
 			}
         } catch (TikaException te) {
-        		System.out.println("Caught tika exception, skipping");
+        	System.out.println("Caught tika exception, skipping");
         } catch (SAXException se) {
-        		System.out.println("Caught SAXException, skipping");
+        	System.out.println("Caught SAXException, skipping");
         } finally {
-        		if (stream != null) {
-        			stream.close();
-        		}        	
+        	if (stream != null) {
+        		stream.close();
+        	}        	
         }
         return props;
 	}

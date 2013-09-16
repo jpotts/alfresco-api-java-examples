@@ -4,8 +4,8 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 
 /**
- * Simple example that shows how to connect to the Alfresco Cloud
- * and retrieve repository information.
+ * Simple example that shows how to use the Alfresco Public API to
+ * retrieve repository information.
  * 
  * @author jpotts
  *

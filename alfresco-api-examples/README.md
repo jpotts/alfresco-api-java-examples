@@ -12,11 +12,14 @@ extend from BaseCloudExample.
 To run a given example against Alfresco on-premise, change the example class to extend
 from BaseOnPremExample.
 
-Before running either example
-=============================
+Before running against either cloud or on-premise
+=================================================
 
 In BasePublicAPIExample.java, set SITE to a test site ID in which you can
 create and delete folders and documents.
+
+If you are running CmisCreateDocumentExample or CmisAspectExample, set the
+constants in those classes to match your environment.
 
 Before running against Alfresco in the cloud
 ============================================

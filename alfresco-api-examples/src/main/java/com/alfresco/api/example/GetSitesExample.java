@@ -8,13 +8,13 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 
 /** 
- * Simple example that shows how to hit the Alfresco Cloud with
+ * Simple example that shows how to hit the Alfresco Public API with
  * the REST API to find the user's home network and to list up to
  * 10 sites visible to the user.
  * 
  * @author jpotts
  */
-public class GetSitesExample extends BaseCloudExample {
+public class GetSitesExample extends BaseOnPremExample {
 	
 	public static void main(String[] args) {
 		GetSitesExample gse = new GetSitesExample();
