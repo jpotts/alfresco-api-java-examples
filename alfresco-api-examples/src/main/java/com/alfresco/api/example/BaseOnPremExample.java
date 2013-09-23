@@ -47,7 +47,8 @@ public class BaseOnPremExample extends BasePublicAPIExample {
 		try {
 			atomPubURL = ALFRESCO_API_URL + getHomeNetwork(ALFRESCO_API_URL, requestFactory) + "/public/cmis/versions/1.0/atom";
 		} catch (IOException ioe) {
-			atomPubURL = "-default-";
+			System.out.println("Warning: Couldn't determine home network, defaulting to -default-");
+			atomPubURL = ALFRESCO_API_URL + "-default-" + "/public/cmis/versions/1.0/atom";
 		}
 		
 		return atomPubURL;
