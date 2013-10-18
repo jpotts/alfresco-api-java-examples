@@ -18,6 +18,7 @@ import com.alfresco.api.example.model.ContainerEntry;
 import com.alfresco.api.example.model.ContainerList;
 import com.alfresco.api.example.model.NetworkEntry;
 import com.alfresco.api.example.model.NetworkList;
+import com.alfresco.api.example.util.Config;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
@@ -32,18 +33,12 @@ import com.google.api.client.http.HttpRequestFactory;
  * @author jpotts
  *
  */
-public class BasePublicAPIExample {
-	/**
-	 * Change this to the ID of a site in which you have collaborator access.
-	 */
-	public static final String SITE = "alfresco-api-demo";
-
-	// Do not change these
+abstract public class BasePublicAPIExample {
 	public static final String SITES_URL = "/public/alfresco/versions/1/sites/";
 	public static final String NODES_URL = "/public/alfresco/versions/1/nodes/";
 
 	private String homeNetwork;
-
+	
 	/**
 	 * Use the CMIS API to get a handle to the root folder of the
      * target site, then create a new folder, then create
@@ -57,8 +52,8 @@ public class BasePublicAPIExample {
 	 * @author jpotts
 	 * 
 	 */
-	public Folder createFolder(Session cmisSession, String parentFolderId, String folderName) {
-		        
+	public Folder createFolder(String parentFolderId, String folderName) {
+		Session cmisSession = getCmisSession();        
         Folder rootFolder = (Folder) cmisSession.getObject(parentFolderId);
         
         Folder subFolder = null;
@@ -78,11 +73,11 @@ public class BasePublicAPIExample {
         return subFolder;
 	}
 
-	public String getHomeNetwork(String alfrescoAPIUrl, HttpRequestFactory requestFactory) throws IOException {
+	public String getHomeNetwork() throws IOException {
 		if (this.homeNetwork == null) {
-			GenericUrl url = new GenericUrl(alfrescoAPIUrl);
+			GenericUrl url = new GenericUrl(getAlfrescoAPIUrl());
 	        
-			HttpRequest request = requestFactory.buildGetRequest(url);
+			HttpRequest request = getRequestFactory().buildGetRequest(url);
 	
 	        NetworkList networkList = request.execute().parseAs(NetworkList.class);
 	        System.out.println("Found " + networkList.list.pagination.totalItems + " networks.");
@@ -101,6 +96,13 @@ public class BasePublicAPIExample {
 	    return this.homeNetwork;
 	}
 
+	public Document createDocument(Folder parentFolder,
+								   File file,
+								   String fileType)
+			throws FileNotFoundException {
+		return createDocument(parentFolder, file, fileType, null);
+	}
+
 	/**
 	 * Use the CMIS API to create a document in a folder
 	 * 
@@ -115,13 +117,14 @@ public class BasePublicAPIExample {
 	 * @author jpotts
 	 * 
 	 */
-	public Document createDocument(Session cmisSession,
-								   Folder parentFolder,
+	public Document createDocument(Folder parentFolder,
 								   File file,
 								   String fileType,
 								   Map<String, Object> props)
 			throws FileNotFoundException {
 
+		Session cmisSession = getCmisSession();
+		
 		String fileName = file.getName();
 
 		// create a map of properties if one wasn't passed in
@@ -167,14 +170,15 @@ public class BasePublicAPIExample {
 	 * @author jpotts
 	 * 
 	 */
-	public String getRootFolderId(String alfrescoAPIUrl, HttpRequestFactory requestFactory, String homeNetwork, String site) throws IOException {
-        GenericUrl containersUrl = new GenericUrl(alfrescoAPIUrl +
-                                             homeNetwork +
+	public String getRootFolderId(String site) throws IOException {
+		
+        GenericUrl containersUrl = new GenericUrl(getAlfrescoAPIUrl() +
+                                             getHomeNetwork() +
         		                             SITES_URL +
                                              site +
                                              "/containers");
         System.out.println(containersUrl);
-        HttpRequest request = requestFactory.buildGetRequest(containersUrl);
+        HttpRequest request = getRequestFactory().buildGetRequest(containersUrl);
         ContainerList containerList = request.execute().parseAs(ContainerList.class);
         String rootFolderId = null;
         for (ContainerEntry containerEntry : containerList.list.entries) {
@@ -194,14 +198,14 @@ public class BasePublicAPIExample {
 	 * @param objectId
 	 * @throws IOException
 	 */
-	public void like(String alfrescoAPIUrl, HttpRequestFactory requestFactory, String homeNetwork, String objectId) throws IOException {
-        GenericUrl likeUrl = new GenericUrl(alfrescoAPIUrl + 
-        					 homeNetwork +
+	public void like(String objectId) throws IOException {
+        GenericUrl likeUrl = new GenericUrl(getAlfrescoAPIUrl() + 
+        					 getHomeNetwork() +
         					 NODES_URL + 
         					 objectId +
         					 "/ratings");
         HttpContent body = new ByteArrayContent("application/json", "{\"id\": \"likes\", \"myRating\": true}".getBytes());
-        HttpRequest request = requestFactory.buildPostRequest(likeUrl, body);
+        HttpRequest request = getRequestFactory().buildPostRequest(likeUrl, body);
         request.execute();
         System.out.println("You liked: " + objectId);
 	}
@@ -215,17 +219,37 @@ public class BasePublicAPIExample {
 	 * @param comment
 	 * @throws IOException
 	 */
-	public void comment(String alfrescoAPIUrl, HttpRequestFactory requestFactory, String homeNetwork, String objectId, String comment) throws IOException {
-        GenericUrl commentUrl = new GenericUrl(alfrescoAPIUrl + 
-        					 homeNetwork +
+	public void comment(String objectId, String comment) throws IOException {
+        GenericUrl commentUrl = new GenericUrl(getAlfrescoAPIUrl() + 
+        					 getHomeNetwork() +
         					 NODES_URL + 
         					 objectId +
         					 "/comments");
         HttpContent body = new ByteArrayContent("application/json",
         										("{\"content\": \"" + comment + "\"}").getBytes());
-        HttpRequest request = requestFactory.buildPostRequest(commentUrl, body);
+        HttpRequest request = getRequestFactory().buildPostRequest(commentUrl, body);
         request.execute();
         System.out.println("You commented on: " + objectId);
 	}
 
+	public String getSite() {
+		return Config.getConfig().getProperty("site");
+	}
+
+	public String getFolderName() {
+		return Config.getConfig().getProperty("folder_name");
+	}
+
+	public File getLocalFile() {
+		String filePath = Config.getConfig().getProperty("local_file_path");
+		return new File(filePath);
+	}
+
+	public String getLocalFileType() {
+		return Config.getConfig().getProperty("local_file_type");
+	}
+
+	abstract public String getAlfrescoAPIUrl();	
+	abstract public Session getCmisSession();
+	abstract public HttpRequestFactory getRequestFactory();
 }

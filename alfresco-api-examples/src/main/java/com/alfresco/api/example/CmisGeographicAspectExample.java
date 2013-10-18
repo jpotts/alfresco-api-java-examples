@@ -28,7 +28,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author jpotts
  *
  */
-public class CmisAspectExample extends BaseOnPremExample {
+public class CmisGeographicAspectExample extends BaseOnPremExample {
 
 	public static final String FOLDER_NAME = "images";
 	public static final String FILE_PATH = "/users/jpotts/Documents/sample/photos/Berlin";
@@ -38,7 +38,7 @@ public class CmisAspectExample extends BaseOnPremExample {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		CmisAspectExample ccde = new CmisAspectExample();
+		CmisGeographicAspectExample ccde = new CmisGeographicAspectExample();
 		try {
 			ccde.doExample();
 		} catch (Exception e) {
@@ -53,11 +53,7 @@ public class CmisAspectExample extends BaseOnPremExample {
 			Session cmisSession = getCmisSession();
 			
 			// Find the root folder of our target site
-			String rootFolderId = getRootFolderId(
-					ALFRESCO_API_URL,
-					getRequestFactory(),
-					getHomeNetwork(ALFRESCO_API_URL, getRequestFactory()),
-					SITE);
+			String rootFolderId = getRootFolderId(getSite());
 			
 			// Create a new folder in the root folder
 			Folder subFolder = createFolder(cmisSession, rootFolderId, FOLDER_NAME);
@@ -81,7 +77,7 @@ public class CmisAspectExample extends BaseOnPremExample {
 		        }
 	
 		        // create the document in the repo
-		        createDocument(getCmisSession(), subFolder, file, FILE_TYPE, props);
+		        createDocument(subFolder, file, FILE_TYPE, props);
 			        
 			}
 		} catch (IOException ioe) {

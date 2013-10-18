@@ -1,6 +1,7 @@
 package com.alfresco.api.example;
 
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 
 /**
@@ -27,11 +28,24 @@ public class CmisRepositoryInfoExample extends BaseOnPremExample {
 		Session cmisSession = getCmisSession();
 		
 		// Get the repository info
-		RepositoryInfo repositoryInfo = cmisSession.getRepositoryInfo();
+		RepositoryInfo repoInfo = cmisSession.getRepositoryInfo();
 		
-		System.out.println("    Name: " + repositoryInfo.getName());
-		System.out.println("  Vendor: " + repositoryInfo.getVendorName());
-		System.out.println(" Version: " + repositoryInfo.getProductVersion());
+		System.out.println("Product name: " + repoInfo.getProductName());
+		System.out.println("Product version: " + repoInfo.getProductVersion());
+		System.out.println("Product vendor: " + repoInfo.getVendorName());
+		System.out.println("CMIS version supported: " + repoInfo.getCmisVersionSupported());
+		
+		RepositoryCapabilities caps = repoInfo.getCapabilities();
+		
+		System.out.println("Partial list of capabilities...");
+		System.out.println("Joins? " + caps.getJoinCapability());
+		System.out.println("ACLs? " + caps.getAclCapability());
+		System.out.println("Changes? " + caps.getChangesCapability());
+		System.out.println("Queries? " + caps.getQueryCapability());
+		System.out.println("Content stream updates? " + caps.getContentStreamUpdatesCapability());
+		System.out.println("Renditions? " + caps.getRenditionsCapability());
+		System.out.println("Multifiling? " + caps.isMultifilingSupported());
+		System.out.println("Version-specific filing? " + caps.isVersionSpecificFilingSupported());		
 
 	}
 }

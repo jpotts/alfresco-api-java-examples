@@ -17,8 +17,8 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 
 import com.alfresco.api.example.oauth.LocalServerReceiver;
-import com.alfresco.api.example.oauth.OAuth2ClientCredentials;
 import com.alfresco.api.example.oauth.VerificationCodeReceiver;
+import com.alfresco.api.example.util.Config;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -43,6 +43,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
  */
 public class BaseCloudExample extends BasePublicAPIExample {
 	
+	public static final String CMIS_URL = "cmis/versions/1.0/atom";
 	public static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 	public static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
@@ -50,14 +51,19 @@ public class BaseCloudExample extends BasePublicAPIExample {
 	
 	public static final String TOKEN_SERVER_URL = ALFRESCO_API_URL + "auth/oauth/versions/2/token";
 	public static final String AUTHORIZATION_SERVER_URL = ALFRESCO_API_URL + "auth/oauth/versions/2/authorize";
-	private static final String SCOPE = "public_api";
-	private static final List<String> SCOPES = Arrays.asList(SCOPE);
+	public static final String SCOPE = "public_api";
+	public static final List<String> SCOPES = Arrays.asList(SCOPE);
 
 	private HttpRequestFactory requestFactory;
 	private Credential credential;
+	private Session cmisSession;
+
+	public String getAlfrescoAPIUrl() {
+		return ALFRESCO_API_URL;
+	}
 
 	public String getAtomPubURL() {
-		return ALFRESCO_API_URL + "cmis/versions/1.0/atom";
+		return ALFRESCO_API_URL + CMIS_URL;
 	}
 
 	public void launchInBrowser(
@@ -95,7 +101,7 @@ public class BaseCloudExample extends BasePublicAPIExample {
 			VerificationCodeReceiver receiver = new LocalServerReceiver();
 		    try {
 		    	String redirectUri = receiver.getRedirectUri();
-		    	launchInBrowser("google-chrome", redirectUri, OAuth2ClientCredentials.CLIENT_ID, SCOPE);
+		    	launchInBrowser("google-chrome", redirectUri, BaseCloudExample.getAPIKey(), SCOPE);
 		    	this.credential = authorize(receiver, redirectUri);
 		    	
 		    	this.requestFactory = HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
@@ -130,8 +136,8 @@ public class BaseCloudExample extends BasePublicAPIExample {
 			        JSON_FACTORY,
 			        new GenericUrl(TOKEN_SERVER_URL),
 			        new ClientParametersAuthentication(
-			            OAuth2ClientCredentials.CLIENT_ID, OAuth2ClientCredentials.CLIENT_SECRET),
-			        OAuth2ClientCredentials.CLIENT_ID,
+			            BaseCloudExample.getAPIKey(), BaseCloudExample.getAPISecret()),
+			        BaseCloudExample.getAPIKey(),
 			        AUTHORIZATION_SERVER_URL).setScopes(SCOPES).build();
 			
 			TokenResponse response = codeFlow.newTokenRequest(code)
@@ -148,23 +154,26 @@ public class BaseCloudExample extends BasePublicAPIExample {
 	 * @return Session
 	 */
 	public Session getCmisSession() {
-		String accessToken = getCredential().getAccessToken();
-		System.out.println("Access token:" + accessToken);
-		
-		// default factory implementation
-		SessionFactory factory = SessionFactoryImpl.newInstance();
-		Map<String, String> parameter = new HashMap<String, String>();
-
-		// connection settings
-		parameter.put(SessionParameter.ATOMPUB_URL, this.getAtomPubURL());
-		parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
-		parameter.put(SessionParameter.AUTH_HTTP_BASIC, "false");
-		parameter.put(SessionParameter.HEADER + ".0", "Authorization: Bearer " + accessToken);
-		parameter.put(SessionParameter.OBJECT_FACTORY_CLASS, "org.alfresco.cmis.client.impl.AlfrescoObjectFactoryImpl");
-
-		List<Repository> repositories = factory.getRepositories(parameter);
-
-		return repositories.get(0).createSession();
+		if (cmisSession == null) {
+			String accessToken = getCredential().getAccessToken();
+			System.out.println("Access token:" + accessToken);
+			
+			// default factory implementation
+			SessionFactory factory = SessionFactoryImpl.newInstance();
+			Map<String, String> parameter = new HashMap<String, String>();
+	
+			// connection settings
+			parameter.put(SessionParameter.ATOMPUB_URL, this.getAtomPubURL());
+			parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+			parameter.put(SessionParameter.AUTH_HTTP_BASIC, "false");
+			parameter.put(SessionParameter.HEADER + ".0", "Authorization: Bearer " + accessToken);
+			parameter.put(SessionParameter.OBJECT_FACTORY_CLASS, "org.alfresco.cmis.client.impl.AlfrescoObjectFactoryImpl");
+	
+			List<Repository> repositories = factory.getRepositories(parameter);
+	
+			cmisSession = repositories.get(0).createSession();
+		}
+		return cmisSession;
 	}
 
 	public Credential getCredential() {
@@ -174,4 +183,11 @@ public class BaseCloudExample extends BasePublicAPIExample {
 		return this.credential;
 	}
 
+	public static String getAPIKey() {
+		return Config.getConfig().getProperty("api_key");
+	}
+	
+	public static String getAPISecret() {
+		return Config.getConfig().getProperty("api_secret");
+	}
 }

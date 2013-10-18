@@ -15,19 +15,19 @@ from BaseOnPremExample.
 Before running against either cloud or on-premise
 =================================================
 
-In BasePublicAPIExample.java, set SITE to a test site ID in which you can
+Edit config.properties. Set site to a test site ID in which you can
 create and delete folders and documents.
 
-If you are running CmisCreateDocumentExample or CmisAspectExample, set the
-constants in those classes to match your environment.
+If you are running CmisCreateDocumentExample or CmisGeographicAspectExample, set the
+folder_name, local_file_path, and local_file_type properties.
 
 Before running against Alfresco in the cloud
 ============================================
 
-Before running these examples you must first register at:
+Before running these examples against Alfresco in the cloud you must first register at:
 https://developer.alfresco.com
 
-Add your auth key and secret to OAuth2ClientCredentials.java.
+Add your API key and secret to config.properties.
 
 In your application profile on developer.alfresco.com, you must set
 your callback URL to http://127.0.0.1:8080/Callback.
@@ -38,9 +38,4 @@ you must make the appropriate change to LocalServerReceiver.java.
 Before running against Alfresco on-premise
 ==========================================
 
-In BaseOnPremExample.java, set these to match your environment:
-
- * ALFRESCO_API_URL: May need to adjust hostname and port number.
- * USER_NAME: Use a username that has an account in Alfresco with access to the
-SITE you specified earlier.
- * PASSWORD: Password for that account.
+Edit host, username, and password.

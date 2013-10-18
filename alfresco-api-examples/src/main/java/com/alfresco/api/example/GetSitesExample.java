@@ -24,13 +24,12 @@ public class GetSitesExample extends BaseOnPremExample {
 	public void doExample() {
 		try {
 			// Find the user's home network
-			String homeNetwork = getHomeNetwork(ALFRESCO_API_URL, getRequestFactory());
+			String homeNetwork = getHomeNetwork();
 	        
 	        // List some of the sites the user can see
-	        GenericUrl sitesUrl = new GenericUrl(ALFRESCO_API_URL +
+	        GenericUrl sitesUrl = new GenericUrl(getAlfrescoAPIUrl() +
 	        									 homeNetwork +
 	        									 SITES_URL + "?maxItems=10");
-	        System.out.println(sitesUrl);
 	        HttpRequest request = getRequestFactory().buildGetRequest(sitesUrl);
 	        SiteList siteList = request.execute().parseAs(SiteList.class);
 	        System.out.println("Up to 10 sites you can see are:");
