@@ -6,19 +6,19 @@ import java.util.Properties;
 
 public class Config {
 
-	private static Properties config;
+    private static Properties config;
 
-	public static Properties getConfig() {
-		if (config == null) {
-			config = new Properties();
-			try {
-		   		config.load(new FileInputStream("config.properties"));
-		   	} catch (IOException ioe) {
-		   		ioe.printStackTrace();
-		    }
-			
-		}
-		return config;
-	}	
+    public static Properties getConfig() {
+        if (config == null) {
+            config = new Properties();
+            try {
+                   config.load(new FileInputStream("config.properties"));
+               } catch (IOException ioe) {
+                   ioe.printStackTrace();
+            }
+
+        }
+        return config;
+    }
 
 }
